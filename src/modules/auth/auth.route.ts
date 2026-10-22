@@ -8,23 +8,23 @@ import { authLimiter } from "../../middlewares/rate-limiter.js";
 const authRoute = Router();
 
 authRoute.post(
-	"/signup",
-	authLimiter,
-	validateRequest(authValidation.signupSchema),
-	authControllers.signup,
+  "/signup",
+  authLimiter,
+  validateRequest(authValidation.signupSchema),
+  authControllers.signup,
 );
 
 authRoute.post(
-	"/login",
-	authLimiter,
-	validateRequest(authValidation.loginSchema),
-	authControllers.login,
+  "/login",
+  authLimiter,
+  validateRequest(authValidation.loginSchema),
+  authControllers.login,
 );
 
-authRoute.get(
-	"/me",
-	auth(),
-	authControllers.getMe,
-);
+authRoute.get("/me", auth(), authControllers.getMe);
+
+authRoute.post("/refresh-token", authControllers.refreshToken);
+
+authRoute.post("/logout", auth(), authControllers.logout);
 
 export default authRoute;

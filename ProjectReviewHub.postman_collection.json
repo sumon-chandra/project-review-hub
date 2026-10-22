@@ -1,0 +1,578 @@
+{
+	"info": {
+		"_postman_id": "c1f72a44-8e3b-4c59-bf72-88e91d5cb799",
+		"name": "ProjectReview Hub API",
+		"description": "Complete ready-to-use Postman Collection for ProjectReview Hub backend. Includes automated token saving, request bodies, query parameters, and RBAC authentication headers.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "studentToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "mentorToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "submissionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "mentorEmail",
+			"value": "mentor@projectreviewhub.dev",
+			"type": "string"
+		},
+		{
+			"key": "mentorPassword",
+			"value": "MentorPassword123!",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health & Root",
+			"item": [
+				{
+					"name": "API Welcome Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": ["{{baseUrl}}"],
+							"path": [""]
+						},
+						"description": "Check if API server is running."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Student Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (response.data && response.data.token) {",
+									"    pm.collectionVariables.set('studentToken', response.data.token);",
+									"    console.log('Saved studentToken to collection variables.');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Alice Student\",\n  \"email\": \"alice.student@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/signup",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "signup"]
+						},
+						"description": "Register a new student account. Automatically assigns role STUDENT and saves the JWT token to {{studentToken}}."
+					},
+					"response": []
+				},
+				{
+					"name": "Student Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (response.data && response.data.token) {",
+									"    pm.collectionVariables.set('studentToken', response.data.token);",
+									"    console.log('Updated studentToken in collection variables.');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"alice.student@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "login"]
+						},
+						"description": "Log in with student credentials. Saves token to {{studentToken}}."
+					},
+					"response": []
+				},
+				{
+					"name": "Mentor Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (response.data && response.data.token) {",
+									"    pm.collectionVariables.set('mentorToken', response.data.token);",
+									"    console.log('Saved mentorToken to collection variables.');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{mentorEmail}}\",\n  \"password\": \"{{mentorPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "login"]
+						},
+						"description": "Log in with seeded mentor credentials. Saves token to {{mentorToken}}."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile (Student / Me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{studentToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "me"]
+						},
+						"description": "Retrieve current authenticated user profile and project status."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile (Mentor / Me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "me"]
+						},
+						"description": "Retrieve current authenticated mentor profile."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Submissions (Student)",
+			"item": [
+				{
+					"name": "Initial Project Submission (Attempt #1)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (response.data && response.data.submission) {",
+									"    pm.collectionVariables.set('submissionId', response.data.submission.id);",
+									"    console.log('Saved submissionId:', response.data.submission.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{studentToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"projectName\": \"Modern E-Commerce Platform\",\n  \"repositoryUrl\": \"https://github.com/alice/ecommerce-store\",\n  \"liveUrl\": \"https://alice-ecommerce-store.vercel.app\",\n  \"description\": \"Initial submission attempt #1: Next.js frontend with Express backend and Prisma PostgreSQL database. Includes authentication, product catalog, and cart.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/submissions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "submissions"]
+						},
+						"description": "Submit initial project. Creates Project and ProjectSubmission (Attempt #1, status PENDING)."
+					},
+					"response": []
+				},
+				{
+					"name": "Resubmit Project (Attempt #2 - After Rejection)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (response.data && response.data.submission) {",
+									"    pm.collectionVariables.set('submissionId', response.data.submission.id);",
+									"    console.log('Updated submissionId to new attempt:', response.data.submission.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{studentToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"liveUrl\": \"https://alice-ecommerce-store-v2.vercel.app\",\n  \"description\": \"Attempt #2: Resolved mentor feedback. Implemented responsive checkout layout, fixed pagination edge cases, and secured endpoints.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/submissions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "submissions"]
+						},
+						"description": "Resubmit an existing project after receiving review feedback. Creates a new attempt (Attempt #2, status PENDING)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Project & Submissions History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{studentToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/submissions/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "submissions", "me"]
+						},
+						"description": "Retrieve student's project, all historical submission attempts, and associated mentor reviews."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mentor Dashboard",
+			"item": [
+				{
+					"name": "Get Global Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/statistics",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "statistics"]
+						},
+						"description": "Retrieve global aggregate counts: totalSubmissions, totalProjects, pendingCount, approvedCount, and rejectedCount."
+					},
+					"response": []
+				},
+				{
+					"name": "List All Submissions (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/submissions?page=1&limit=10&sortBy=submittedAt&order=desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "submissions"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "submittedAt"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "List submissions with server-side pagination and sorting."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Submissions (PENDING)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/submissions?status=PENDING&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "submissions"],
+							"query": [
+								{
+									"key": "status",
+									"value": "PENDING"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Server-side status filter for PENDING submission attempts."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Submissions (APPROVED)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/submissions?status=APPROVED&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "submissions"],
+							"query": [
+								{
+									"key": "status",
+									"value": "APPROVED"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Server-side status filter for APPROVED submission attempts."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Submissions (Query)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/submissions?search=Ecommerce&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "submissions"],
+							"query": [
+								{
+									"key": "search",
+									"value": "Ecommerce"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Search submissions across project names or student names/emails."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submission by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/submissions/{{submissionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "submissions", "{{submissionId}}"]
+						},
+						"description": "Retrieve full details of a specific submission attempt, including project and prior attempt history."
+					},
+					"response": []
+				},
+				{
+					"name": "Review Submission (Reject with Feedback)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": \"NEEDS_IMPROVEMENT\",\n  \"decision\": \"REJECTED\",\n  \"feedback\": \"Good initial start. Please fix the mobile responsiveness on the checkout page, handle database connection retries, and ensure the live demo link loads without CORS errors.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/submissions/{{submissionId}}/review",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "submissions", "{{submissionId}}", "review"]
+						},
+						"description": "Evaluate submission attempt as REJECTED with mandatory feedback. Transitions status from PENDING to REJECTED."
+					},
+					"response": []
+				},
+				{
+					"name": "Review Submission (Approve)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{mentorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": \"EXCELLENT\",\n  \"decision\": \"APPROVED\",\n  \"feedback\": \"Outstanding work! The project meets all functional requirements, demonstrates clean architecture, and has great documentation.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/mentor/submissions/{{submissionId}}/review",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "mentor", "submissions", "{{submissionId}}", "review"]
+						},
+						"description": "Evaluate submission attempt as APPROVED with EXCELLENT rating. Transitions status from PENDING to APPROVED."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Retrieve list of registered users with safe fields (passwords omitted)."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
