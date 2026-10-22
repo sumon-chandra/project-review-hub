@@ -16,10 +16,20 @@ export const validateRequest = (schema: ZodType) => {
 					req.body = parsed.body;
 				}
 				if ("query" in parsed && parsed.query !== undefined) {
-					req.query = parsed.query as Request["query"];
+					Object.defineProperty(req, "query", {
+						value: parsed.query,
+						writable: true,
+						configurable: true,
+						enumerable: true,
+					});
 				}
 				if ("params" in parsed && parsed.params !== undefined) {
-					req.params = parsed.params as Request["params"];
+					Object.defineProperty(req, "params", {
+						value: parsed.params,
+						writable: true,
+						configurable: true,
+						enumerable: true,
+					});
 				}
 			}
 
