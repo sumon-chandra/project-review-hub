@@ -1,0 +1,20 @@
+model ProjectSubmission {
+  id            String           @id @default(uuid())
+  projectId     String
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  attemptNumber Int
+  description   String           @db.Text
+  repositoryUrl String
+  liveUrl       String
+  status        SubmissionStatus @default(PENDING)
+  submittedAt   DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  review ProjectReview?
+
+  @@unique([projectId, attemptNumber])
+  @@index([status])
+  @@index([submittedAt])
+  @@index([projectId])
+  @@map("project_submissions")
+}

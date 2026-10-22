@@ -1,0 +1,18 @@
+enum Role {
+    STUDENT
+    MENTOR
+}
+
+enum SubmissionStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+enum ReviewRating {
+    EXCELLENT
+    VERY_GOOD
+    GOOD
+    NEEDS_IMPROVEMENT
+    UNSATISFACTORY
+}
