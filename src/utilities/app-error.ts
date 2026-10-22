@@ -6,8 +6,10 @@ export type ErrorCode =
 	| "NOT_FOUND"
 	| "UNAUTHORIZED"
 	| "FORBIDDEN"
+	| "CONFLICT"
 	| "EMAIL_CONFLICT"
 	| "AUTH_FAILED"
+	| "TOO_MANY_REQUESTS"
 	| "INTERNAL_ERROR";
 
 export interface AppErrorOptions {
@@ -45,20 +47,24 @@ class AppError extends Error {
 		return new AppError({ statusCode: status.NOT_FOUND, message, code: "NOT_FOUND" });
 	}
 
-	static badRequest(message = "Bad request.") {
-		return new AppError({ statusCode: status.BAD_REQUEST, message, code: "NOT_FOUND" });
+	static badRequest(message = "Bad request.", meta?: Record<string, unknown>) {
+		return new AppError({ statusCode: status.BAD_REQUEST, message, code: "BAD_REQUEST", meta });
 	}
 
-	static unauthorized(message = "Unauthorize access.") {
+	static unauthorized(message = "Unauthorized access.") {
 		return new AppError({ statusCode: status.UNAUTHORIZED, message, code: "UNAUTHORIZED" });
 	}
 
-	static forbidden(message = "Forbidden.") {
+	static forbidden(message = "Forbidden access.") {
 		return new AppError({ statusCode: status.FORBIDDEN, message, code: "FORBIDDEN" });
 	}
 
-	static conflict(message: string, code: "EMAIL_CONFLICT") {
-		return new AppError({ statusCode: status.CONFLICT, message, code });
+	static conflict(message: string, code: ErrorCode = "CONFLICT", meta?: Record<string, unknown>) {
+		return new AppError({ statusCode: status.CONFLICT, message, code, meta });
+	}
+
+	static tooManyRequests(message = "Too many requests. Please try again later.") {
+		return new AppError({ statusCode: status.TOO_MANY_REQUESTS, message, code: "TOO_MANY_REQUESTS" });
 	}
 
 	static internal(message = "Something went wrong.", meta?: Record<string, unknown>) {
